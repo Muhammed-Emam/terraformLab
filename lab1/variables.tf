@@ -1,20 +1,10 @@
-variable "aws_access_key" {
-  type        = string
-  description = "AWS Access Key"
-  sensitive   = true
+
+variable "private_key_path" {
+  type = string
+  default = "/home/emam/.ssh/terraform"
 }
 
-variable "aws_secret_key" {
-  type        = string
-  description = "AWS Secret Key"
-  sensitive   = trueresource "aws_subnet" "pub-sub" {
-  cidr_block              = var.vpc_subnets_cidr_blocks[0]
-  vpc_id                  = aws_vpc.vpc.id
-  map_public_ip_on_launch = var.map_public_ip_on_launch
-  availability_zone       = data.aws_availability_zones.available.names[0]
 
-}
-}
 
 variable "aws_region" {
   type        = string
@@ -56,14 +46,4 @@ variable "company" {
   type        = string
   description = "Company name for resource tagging"
   default     = "Globomantics"
-}
-
-variable "project" {
-  type        = string
-  description = "Project name for resource tagging"
-}
-
-variable "billing_code" {
-  type        = string
-  description = "Billing code for resource tagging"
 }
