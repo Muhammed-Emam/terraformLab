@@ -28,14 +28,14 @@ resource "aws_internet_gateway" "igw" {
 
 }
 
-resource "aws_eip" "nat" {
-  vpc = true
-}
+# resource "aws_eip" "nat" {
+#   vpc = true
+# }
 
-resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.pub-sub.id
-}
+# resource "aws_nat_gateway" "nat" {
+#   allocation_id = aws_eip.nat.id
+#   subnet_id     = aws_subnet.pub-sub.id
+# }
 
 
 resource "aws_subnet" "pub-sub" {
@@ -70,7 +70,9 @@ resource "aws_route_table" "private-rtb" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
+    #nat_gateway_id = aws_nat_gateway.nat.id
+    gateway_id = aws_internet_gateway.igw.id
+
   }
 
 }
@@ -104,6 +106,13 @@ resource "aws_security_group" "ssh_from_anywhere" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
 }
 
 #ssh_and_port_3000
@@ -125,15 +134,22 @@ resource "aws_security_group" "ssh_and_port_3000" {
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr_block]
   }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+  
 }
 
 
 
 
 
-
-
-
+  
+# }
 # ALB Security Group
 resource "aws_security_group" "alb_sg" {
   name   = "nginx_alb_sg"
