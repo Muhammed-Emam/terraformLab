@@ -1,0 +1,25 @@
+Without adding the private key to the SSH agent
+If you do not add the private key to the SSH agent,
+you will need to specify the path to the private key file every time you connect to the instance via SSH. For example:
+
+ssh -i /path/to/private_key.pem ec2-user@<public-ip-or-dns>
+
+
+
+With adding the private key to the SSH agent
+If you add the private key to the SSH agent, you can connect to the instance without specifying the key file explicitly. For example:
+
+# Add the private key to the SSH agent
+eval $(ssh-agent -s)
+ssh-add /path/to/private_key.pem
+
+# Connect to the instance without specifying the key file
+ssh ec2-user@<public-ip-or-dns>
+
+
+In this case, the private key is added to the SSH agent using ssh-add, and the ssh command is used to connect to the instance without specifying the key file explicitly. The SSH agent automatically uses the key that was added to it previously.
+
+Note that in both cases, you still need to specify the username and IP address or DNS name of the instance you want to connect to. The difference is whether or not you need to specify the path to the private key file explicitly.
+
+
+
