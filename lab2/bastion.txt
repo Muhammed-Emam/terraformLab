@@ -1,0 +1,7 @@
+Bastion public IP: 18.212.41.245
+Bastion public IP: 3.75.231.80
+Bastion public IP: 34.201.73.102
+Bastion public IP: 3.84.188.208
+Bastion public IP: 54.91.212.167
+Bastion public IP: 3.86.58.90
+Bastion public IP: 44.211.43.17

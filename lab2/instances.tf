@@ -25,7 +25,7 @@ locals {
 }
 
 resource "aws_key_pair" "public_key" {
-  key_name  = "pub-key"
+  key_name  = "pub-key1"  //should be variable as if we run it in diffrent worksapace won't allow duplicate naming
   public_key = tls_private_key.key.public_key_openssh
 }
 
@@ -35,7 +35,7 @@ data "template_file" "user_data" {
     #!/bin/bash
 
     #this line is not working for some reason !!!!!!!!!!!!!!
-    sudo cat "${local.private_key_content}" > /home/ec2-user/private_key.pem
+    sudo echo "${local.private_key_content}" > /home/ec2-user/private_key.pem
 
     sudo chmod 400 /home/ec2-user/private_key.pem
 
@@ -55,17 +55,30 @@ data "template_file" "user_data" {
 resource "aws_instance" "bastion" {
   ami                    = nonsensitive(data.aws_ssm_parameter.ami.value)
   instance_type          = var.instance_type
-  subnet_id              = aws_subnet.pub-sub.id
+  subnet_id              = module.my-network.pub-sub1-id
   vpc_security_group_ids = [aws_security_group.ssh_from_anywhere.id]
   key_name               = aws_key_pair.public_key.key_name
   user_data     = data.template_file.user_data.rendered
 
 
+
+  provisioner "local-exec" {
+    command = "echo Bastion public IP: ${self.public_ip} >> bastion.txt"
+  }
+
+
 }
-resource "aws_instance" "application" {
-  ami                    = nonsensitive(data.aws_ssm_parameter.ami.value)
-  instance_type          = var.instance_type
-  subnet_id              = aws_subnet.private-sub.id
-  vpc_security_group_ids = [aws_security_group.ssh_and_port_3000.id]
-  key_name               = aws_key_pair.public_key.key_name
-}
+
+
+
+
+# resource "aws_instance" "application" {
+#   ami                    = nonsensitive(data.aws_ssm_parameter.ami.value)
+#   instance_type          = var.instance_type
+#   subnet_id              = module.my-network.private-sub1-id
+#   vpc_security_group_ids = [aws_security_group.ssh_and_port_3000.id]
+#   key_name               = aws_key_pair.public_key.key_name
+# }
+
+
+
